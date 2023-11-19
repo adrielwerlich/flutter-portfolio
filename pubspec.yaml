@@ -16,7 +16,8 @@ dependencies:
   provider: ^6.0.0
   devtools_shared: ^6.0.0
   dev: ^1.0.0
-  flutter_slider_indicator: ^1.0.0
+  card_actions: ^0.0.1
+  swiping_card_deck: ^1.3.0
 
 
 dev_dependencies:
@@ -28,6 +29,34 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+  assets:
+    - assets/images/shooter-game.png
+    - assets/images/krishna.png
+    - assets/images/air-battle-game.png
+    - assets/images/react-app.png
+    - assets/images/exchange.png
+    - assets/images/krishna.png
+    - assets/images/frontend-challenges.png
+    - assets/images/dice-game.png
+    - assets/images/react-app.png
+    - assets/images/shooter-game.png
+    - assets/images/air-battle-game.png
+    - assets/images/haribol-store.png
+    - assets/images/tic-tac-toe.png
+    - assets/images/simple-rocket.png
+    - assets/images/haribol-store.png
+    - assets/images/exchange.png
+    - assets/images/tic-tac-toe.png
+    - assets/images/frontend-challenges.png
+    - assets/images/chat-clone.png
+    - assets/images/chat-clone.png
+    - assets/images/3d-port.png
+    - assets/images/3d-port.png
+    - assets/images/vue-port.png
+    - assets/images/vue-port.png
+
 
 dependency_overrides:
   path_provider: 2.0.1
+
+  

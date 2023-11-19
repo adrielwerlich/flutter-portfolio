@@ -3,7 +3,6 @@ import 'package:adriel_flutter_app/communicator/communicator.dart';
 import 'package:english_words/english_words.dart';
 import 'package:provider/provider.dart';
 
-
 class MyAppState extends ChangeNotifier {
   var current = WordPair.random();
   void getNext() {
@@ -45,7 +44,7 @@ class GeneratorPage extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           Container(
-            margin: EdgeInsets.only(top: 16, bottom: 16),
+            margin: EdgeInsets.only(top: 2, bottom: 6),
             child: Center(
               child: FractionallySizedBox(
                 widthFactor: 0.8,
@@ -78,18 +77,9 @@ class GeneratorPage extends StatelessWidget {
               ),
             ),
           ),
-          SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () {
-              Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => CommunicatorLogin()));
-            },
-            style: ElevatedButton.styleFrom(
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(1),
-              ),
-            ),
-            child: Text('Go to communicator login'),
+          SizedBox(
+            height: 200,
+            child: FavoritesPage(),
           ),
         ],
       ),
