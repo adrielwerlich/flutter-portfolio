@@ -9,7 +9,6 @@
               "--web-hostname=localhost",
               "--web-port=5050"
           ],
-          "browserName": "firefox"
       }
   ]
 }

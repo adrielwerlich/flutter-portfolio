@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:adriel_flutter_app/communicator/communicator.dart';
 import 'package:english_words/english_words.dart';
 import 'package:provider/provider.dart';
 
@@ -23,9 +22,6 @@ class MyAppState extends ChangeNotifier {
 }
 
 class GeneratorPage extends StatelessWidget {
-  final VoidCallback onMenuPressed;
-
-  GeneratorPage({required this.onMenuPressed});
 
   @override
   Widget build(BuildContext context) {

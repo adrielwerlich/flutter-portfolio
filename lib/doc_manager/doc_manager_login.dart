@@ -3,14 +3,14 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 
-class CommunicatorLogin extends StatefulWidget {
-  final VoidCallback gotoChatPage;
-  CommunicatorLogin({required this.gotoChatPage});
+class DocManagerLogin extends StatefulWidget {
+  final VoidCallback gotoDocsPage;
+  DocManagerLogin({required this.gotoDocsPage});
   @override
-  _CommunicatorLoginState createState() => _CommunicatorLoginState();
+  _DocManagerLoginState createState() => _DocManagerLoginState();
 }
 
-class _CommunicatorLoginState extends State<CommunicatorLogin> {
+class _DocManagerLoginState extends State<DocManagerLogin> {
   bool isLoggedIn = false;
 
   @override
@@ -36,29 +36,21 @@ class _CommunicatorLoginState extends State<CommunicatorLogin> {
 
   @override
   Widget build(BuildContext context) {
-    if (isLoggedIn) {
-      return Scaffold(
+    return MaterialApp(
+      title: 'Login to mobile-desktop exchange',
+      theme: ThemeData.light(), // Light mode theme
+      darkTheme: ThemeData.dark(), // Dark mode theme
+      themeMode: ThemeMode.system, // System theme mode
+      home: Scaffold(
         body: Center(
-          child: Text('User is logged in!'),
-        ),
-      );
-    } else {
-      return MaterialApp(
-        title: 'Login to mobile-desktop exchange',
-        theme: ThemeData.light(), // Light mode theme
-        darkTheme: ThemeData.dark(), // Dark mode theme
-        themeMode: ThemeMode.system, // System theme mode
-        home: Scaffold(
-          body: Center(
-            child: Container(
-              width: MediaQuery.of(context).size.width * 0.8,
-              padding: EdgeInsets.all(20.0),
-              child: LoginForm(onLogin: onLogin),
-            ),
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            padding: EdgeInsets.all(20.0),
+            child: LoginForm(onLogin: onLogin),
           ),
         ),
-      );
-    }
+      ),
+    );
   }
 }
 
@@ -77,6 +69,23 @@ class _LoginFormState extends State<LoginForm> {
   var loading = false;
 
   void _submit(BuildContext ctx) async {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('In construction'),
+          content: Text('This feature is not yet implemented'),
+          actions: <Widget>[
+            ElevatedButton(
+              child: Text('Dead end'),
+              onPressed: () {
+                // Navigator.of(context).pop();
+              },
+            ),
+          ],
+        );
+      },
+    );
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
       setState(() {
@@ -93,9 +102,9 @@ class _LoginFormState extends State<LoginForm> {
         print('Success!');
         widget.onLogin();
         final parentWidget =
-            ctx.findAncestorWidgetOfExactType<CommunicatorLogin>();
+            ctx.findAncestorWidgetOfExactType<DocManagerLogin>();
         if (parentWidget != null) {
-          parentWidget.gotoChatPage();
+          parentWidget.gotoDocsPage();
         }
       } else {
         print('error');
