@@ -55,7 +55,8 @@ class MyApp extends StatelessWidget {
 }
 
 class MainApp extends StatefulWidget {
-  static const baseUrl = 'http://localhost:4876';
+  // rest-ask7cdmnk-adrielwerlich.vercel.app
+  static const baseUrl = kReleaseMode ? 'https://supabase-manager.vercel.app' : 'http://localhost:4876';
   @override
   State<MainApp> createState() => _MainAppState();
 }
