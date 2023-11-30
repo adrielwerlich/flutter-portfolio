@@ -1,43 +1,33 @@
+import 'package:adriel_flutter_app/state/app_state.dart';
+import 'package:adriel_flutter_app/state/models/auth_data.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+
+import '../state/models/user_data.dart';
 
 class DocManagerLogin extends StatefulWidget {
-  final VoidCallback gotoDocsPage;
-  DocManagerLogin({required this.gotoDocsPage});
+  // final VoidCallback gotoDocsPage;
+  // DocManagerLogin({required this.gotoDocsPage});
   @override
   _DocManagerLoginState createState() => _DocManagerLoginState();
 }
 
 class _DocManagerLoginState extends State<DocManagerLogin> {
-  bool isLoggedIn = false;
+  // bool isLoggedIn = false;
 
   @override
   void initState() {
     super.initState();
   }
 
-  void onLogin() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', true);
-    setState(() {
-      isLoggedIn = true;
-    });
-  }
-
-  void onLogout() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.setBool('isLoggedIn', false);
-    setState(() {
-      isLoggedIn = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Login to mobile-desktop exchange',
+      title: 'Login to your documents',
       theme: ThemeData.light(), // Light mode theme
       darkTheme: ThemeData.dark(), // Dark mode theme
       themeMode: ThemeMode.system, // System theme mode
@@ -46,7 +36,7 @@ class _DocManagerLoginState extends State<DocManagerLogin> {
           child: Container(
             width: MediaQuery.of(context).size.width * 0.8,
             padding: EdgeInsets.all(20.0),
-            child: LoginForm(onLogin: onLogin),
+            child: LoginForm(),
           ),
         ),
       ),
@@ -55,71 +45,96 @@ class _DocManagerLoginState extends State<DocManagerLogin> {
 }
 
 class LoginForm extends StatefulWidget {
-  final VoidCallback onLogin;
-  LoginForm({required this.onLogin});
-
   @override
   _LoginFormState createState() => _LoginFormState();
 }
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  String _password = '432121341';
-  String _email = 'example@example.com';
+  String _password = kReleaseMode ? '' : '432121341'; // hard coded credentials for dev/debug purposes only
+  String _email = kReleaseMode ? '' : 'adrielwerlich@outlook.com';
   var loading = false;
 
   void _submit(BuildContext ctx) async {
-    showDialog(
-      context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
-          title: Text('In construction'),
-          content: Text('This feature is not yet implemented'),
-          actions: <Widget>[
-            ElevatedButton(
-              child: Text('Dead end'),
-              onPressed: () {
-                // Navigator.of(context).pop();
-              },
-            ),
-          ],
-        );
-      },
-    );
-    if (_formKey.currentState!.validate()) {
-      _formKey.currentState!.save();
-      setState(() {
-        loading = true;
-      });
-
-      final url = Uri.parse('http://localhost:4876/login');
-      final response = await http.post(
-        url,
-        body: jsonEncode({'password': _password, 'email': _email}),
-        headers: {'Content-Type': 'application/json'},
+    if (kReleaseMode) {
+      // Production mode
+      print('Running in production mode');
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text('In construction'),
+            content: Text('This feature is not yet implemented'),
+            actions: <Widget>[
+              ElevatedButton(
+                child: Text('Dead end'),
+                onPressed: () {
+                  // Navigator.of(context).pop();
+                },
+              ),
+            ],
+          );
+        },
       );
-      if (response.statusCode == 200) {
-        print('Success!');
-        widget.onLogin();
-        final parentWidget =
-            ctx.findAncestorWidgetOfExactType<DocManagerLogin>();
-        if (parentWidget != null) {
-          parentWidget.gotoDocsPage();
-        }
-      } else {
-        print('error');
-      }
+    } else {
+      // Development mode
+      print('Running in development mode');
+      if (_formKey.currentState!.validate()) {
+        _formKey.currentState!.save();
+        setState(() {
+          loading = true;
+        });
 
-      Future.delayed(Duration(seconds: 5), () {
-        // This code will be executed after a delay of 5 seconds.
-        print('5 seconds have passed!');
-        if (mounted) {
-          // Avoid calling `setState` if the widget is no longer in the widget tree.
-          setState(() {
-            loading = false;
-          });
+        final url = Uri.parse('http://localhost:4876/login');
+        final response = await http.post(
+          url,
+          body: jsonEncode({'password': _password, 'email': _email}),
+          headers: {'Content-Type': 'application/json'},
+        );
+        if (response.statusCode == 200) {
+          print('Success!');
+          print(response.body);
+          // ignore: use_build_context_synchronously
+          var appState = Provider.of<AppState>(context, listen: false);
+
+          // Save userData to appState
+          final data = jsonDecode(response.body);
+          if (data['auth'] == true) {
+            appState.logIn(
+              UserData.fromJsonMap(data['userData']),
+              AuthData.fromJsonMap(data['sessionData'])
+            );
+            Fluttertoast.showToast(
+              msg: "Login successful!",
+              toastLength: Toast.LENGTH_SHORT,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 5,
+            );
+          }
+        } else {
+          print('error');
+          print(response.statusCode);
+          print('Error: ${response.statusCode}');
+          print('Error message: ${response.body}');
+          Fluttertoast.showToast(
+            msg: 'Login failed: : ${response.body}',
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            timeInSecForIosWeb: 50,
+          );
         }
-      });
+
+        Future.delayed(Duration(seconds: 5), () {
+          // This code will be executed after a delay of 5 seconds.
+          print('5 seconds have passed!');
+          if (mounted) {
+            // Avoid calling `setState` if the widget is no longer in the widget tree.
+            setState(() {
+              loading = false;
+            });
+          }
+        });
+      }
     }
   }
 

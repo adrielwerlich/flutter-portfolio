@@ -3,7 +3,10 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/foundation.dart';
-import 'dart:html' as html;
+
+import 'dart:io' show Platform;
+
+import 'dart:html' if (dart.library.html) 'dart:html' as html;
 
 class SnakeGame extends StatefulWidget {
   @override
@@ -19,6 +22,7 @@ class _SnakeGameState extends State<SnakeGame> {
   bool isPaused = false;
   late FocusNode focusNode;
   late Duration duration;
+  bool _isLoading = true;
 
   late List<int> snakePosition;
   int food = 300;
@@ -48,6 +52,14 @@ class _SnakeGameState extends State<SnakeGame> {
     ];
   }
 
+  bool isDesktop() {
+    return Platform.isMacOS || Platform.isWindows || Platform.isLinux;
+  }
+
+  bool isMobile() {
+    return Platform.isAndroid || Platform.isIOS;
+  }
+
   void startGame() {
     // const initialDuration = Duration(milliseconds: 300);
     duration = Duration(milliseconds: 300);
@@ -61,42 +73,44 @@ class _SnakeGameState extends State<SnakeGame> {
       }
     });
 
-    html.window.onKeyDown.listen((html.KeyboardEvent event) {
-      // print('Key pressed: ${event.key}');
-      if (event.key == "Escape") {
-        setState(() {
-          isPaused = !isPaused;
-        });
-      }
-      if (event.key == "ArrowUp") {
-        if (direction != 'down') {
+    if (kIsWeb && !isDesktop() && !isMobile()) {
+      html.window.onKeyDown.listen((html.KeyboardEvent event) {
+        // print('Key pressed: ${event.key}');
+        if (event.key == "Escape") {
           setState(() {
-            pendingDirection = 'up';
+            isPaused = !isPaused;
           });
         }
-      }
-      if (event.key == "ArrowDown") {
-        if (direction != 'up') {
-          setState(() {
-            pendingDirection = 'down';
-          });
+        if (event.key == "ArrowUp") {
+          if (direction != 'down') {
+            setState(() {
+              pendingDirection = 'up';
+            });
+          }
         }
-      }
-      if (event.key == "ArrowLeft") {
-        if (direction != 'right') {
-          setState(() {
-            pendingDirection = 'left';
-          });
+        if (event.key == "ArrowDown") {
+          if (direction != 'up') {
+            setState(() {
+              pendingDirection = 'down';
+            });
+          }
         }
-      }
-      if (event.key == "ArrowRight") {
-        if (direction != 'left') {
-          setState(() {
-            pendingDirection = 'right';
-          });
+        if (event.key == "ArrowLeft") {
+          if (direction != 'right') {
+            setState(() {
+              pendingDirection = 'left';
+            });
+          }
         }
-      }
-    });
+        if (event.key == "ArrowRight") {
+          if (direction != 'left') {
+            setState(() {
+              pendingDirection = 'right';
+            });
+          }
+        }
+      });
+    }
   }
 
   @override
@@ -216,7 +230,6 @@ class _SnakeGameState extends State<SnakeGame> {
     );
   }
 
-  bool _isLoading = true;
 
   Future<void> loadMyWidget() async {
     // Simulate a delay of 2 seconds while your widget is loading.
