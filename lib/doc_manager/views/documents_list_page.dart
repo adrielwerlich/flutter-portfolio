@@ -1,12 +1,10 @@
 import 'dart:convert';
 import 'package:intl/intl.dart';
-import 'package:adriel_flutter_app/communicator/model/saved_notes.dart';
 import 'package:adriel_flutter_app/doc_manager/quill/quill_screen.dart';
 import 'package:adriel_flutter_app/state/models/quill_doc.dart';
 import 'package:adriel_flutter_app/main.dart';
 import 'package:adriel_flutter_app/state/app_state.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-
 import 'package:http/http.dart' as http;
 
 import 'package:flutter/material.dart';
@@ -20,18 +18,85 @@ class DocumentListPage extends StatefulWidget {
   _DocumentListPageState createState() => _DocumentListPageState();
 }
 
-class _DocumentListPageState extends State<DocumentListPage> {
-  // List<QuillDoc> list = [];
+class _DocumentListPageState extends State<DocumentListPage>
+    with WidgetsBindingObserver {
   late AppState? appState;
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
-    WidgetsBinding.instance?.addPostFrameCallback((_) {
+    WidgetsBinding.instance?.addPostFrameCallback((_) async {
       appState = Provider.of<AppState>(context, listen: false);
-      loadData();
+      var isLogged = await userIsLogged();
+      if (isLogged) {
+        loadData();
+      }
+      WidgetsBinding.instance?.addObserver(this);
     });
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance?.removeObserver(this);
+    logout();
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    super.didChangeAppLifecycleState(state);
+    if (state == AppLifecycleState.detached) {
+      logout();
+    }
+  }
+
+  Future<bool> userIsLogged() async {
+    _isLoading = true;
+
+    var expiryTime =
+        appState!.authData?.expiresAt;
+
+    var now = DateTime.now().toUtc();
+
+    var expiryDateTime =
+        DateTime.fromMillisecondsSinceEpoch(expiryTime! * 1000, isUtc: true);
+
+    if (now.isAfter(expiryDateTime)) {
+      // Session has expired
+
+      var accessToken = appState!.authData!.accessToken;
+
+      var url = '${MainApp.baseUrl}/check-login';
+
+      var response = await http.get(
+        Uri.parse(url),
+        headers: {
+          'Authorization': '$accessToken',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        var body = jsonDecode(response.body);
+        var loggedIn = body['loggedIn'];
+
+        if (!loggedIn) {
+          appState!.logOut();
+          return false;
+        }
+      } else {
+        // Error occurred while loading data
+        print('Failed to load data. Error: ${response.statusCode}');
+        appState!.logOut();
+        return false;
+      }
+      return true;
+
+    } else {
+      // Session has not expired
+      return true;
+    }
+
   }
 
   Future<void> loadData() async {

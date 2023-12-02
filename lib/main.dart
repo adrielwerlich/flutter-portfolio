@@ -1,8 +1,6 @@
 import 'package:adriel_flutter_app/doc_manager/doc_manager_login.dart';
 import 'package:adriel_flutter_app/doc_manager/views/docs_router.dart';
-import 'package:adriel_flutter_app/doc_manager/views/documents_list_page.dart';
 import 'package:adriel_flutter_app/portfolio/portfolio.dart';
-import 'package:adriel_flutter_app/snake_game/snake_game.dart';
 import 'package:adriel_flutter_app/state/app_state.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -11,9 +9,8 @@ import 'package:adriel_flutter_app/adaptable/ResizeablePage.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
-// import 'communicator/communicator.dart';
-// import 'package:adriel_flutter_app/communicator/messages.dart';
+
+import 'package:adriel_flutter_app/snake_game/snake_game_web.dart' if (dart.library.io) 'package:adriel_flutter_app/snake_game/snake_game_non_web.dart';
 
 void main() async {
   try {
@@ -58,6 +55,7 @@ class MainApp extends StatefulWidget {
   // rest-ask7cdmnk-adrielwerlich.vercel.app
   // static const baseUrl = kReleaseMode ? 'https://supabase-manager.vercel.app' : 'http://localhost:4876';
   static const baseUrl = 'https://supabase-manager.vercel.app';
+  // static const baseUrl = 'http://localhost:4876';
   @override
   State<MainApp> createState() => _MainAppState();
 }

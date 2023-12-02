@@ -39,10 +39,20 @@ class AppState with ChangeNotifier {
   void _loadState() async {
     final prefs = await SharedPreferences.getInstance();
     _isLogged = prefs.getBool('isLogged') ?? false;
-    _userData =
-        UserData.fromJson(jsonDecode(prefs.getString('userData') ?? '{}'));
-    _authData =
-        AuthData.fromJson(jsonDecode(prefs.getString('authData') ?? '{}'));
+
+    String? userDataString = prefs.getString('userData');
+    if (userDataString != null &&
+        userDataString.isNotEmpty &&
+        userDataString != 'null') {
+      _userData = UserData.fromJson(jsonDecode(userDataString));
+    }
+
+    String? authDataString = prefs.getString('authData');
+    if (authDataString != null &&
+        authDataString.isNotEmpty &&
+        authDataString != 'null') {
+      _authData = AuthData.fromJson(jsonDecode(authDataString));
+    }
     notifyListeners();
   }
 

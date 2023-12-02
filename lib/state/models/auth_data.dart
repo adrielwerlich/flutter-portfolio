@@ -1,19 +1,20 @@
 class AuthData {
-  final String accessToken;
-  final int expiresIn;
-  final int expiresAt;
-  final String refreshToken;
-  final String tokenType;
+  final String? accessToken;
+  final int? expiresIn;
+  final int? expiresAt;
+  final String? refreshToken;
+  final String? tokenType;
 
   AuthData({
-    required this.accessToken,
-    required this.expiresIn,
-    required this.expiresAt,
-    required this.refreshToken,
-    required this.tokenType,
+    this.accessToken,
+    this.expiresIn,
+    this.expiresAt,
+    this.refreshToken,
+    this.tokenType,
   });
 
   factory AuthData.fromJsonMap(Map<String, dynamic> json) {
+    if (json.isEmpty) return AuthData();
     return AuthData(
       accessToken: json['access_token'],
       expiresIn: json['expires_in'],
@@ -24,6 +25,7 @@ class AuthData {
   }
 
   factory AuthData.fromJson(Map<String, dynamic> json) {
+    if (json.isEmpty) return AuthData();
     return AuthData(
       accessToken: json['accessToken'],
       expiresIn: json['expiresIn'],
