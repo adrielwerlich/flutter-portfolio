@@ -47,15 +47,13 @@ class _DocumentListPageState extends State<DocumentListPage> {
       var data = body['data'] as List;
       List<QuillDoc> quillDocs =
           data.map((item) => QuillDoc.fromJson(item)).toList();
-      if (quillDocs.isNotEmpty) {
-        await Future.delayed(Duration(seconds: 2));
-        setState(() {
+      await Future.delayed(Duration(seconds: 2));
+      setState(() {
+        if (quillDocs.isNotEmpty) {
           appState?.list = quillDocs;
-          // list = quillDocs;
-          // print(list);
-          _isLoading = false;
-        });
-      }
+        }
+        _isLoading = false;
+      });
     } else {
       // Error occurred while loading data
       print('Failed to load data. Error: ${response.statusCode}');
@@ -120,8 +118,10 @@ class _DocumentListPageState extends State<DocumentListPage> {
                   itemCount: appState?.list.length,
                   itemBuilder: (context, index) => Card(
                         child: ListTile(
-                          title: Text(appState?.list[index].title ?? "Insert a title"),
-                          subtitle: Text(getFormattedDate(appState!.list[index]) ?? ""),
+                          title: Text(
+                              appState?.list[index].title ?? "Insert a title"),
+                          subtitle: Text(
+                              getFormattedDate(appState!.list[index]) ?? ""),
                           onTap: () {
                             if (appState?.list[index].content != null) {
                               Navigator.of(context).pushNamed(

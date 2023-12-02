@@ -7,6 +7,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
+import '../main.dart';
 import '../state/models/user_data.dart';
 
 class DocManagerLogin extends StatefulWidget {
@@ -85,7 +86,12 @@ class _LoginFormState extends State<LoginForm> {
           loading = true;
         });
 
-        final url = Uri.parse('http://localhost:4876/login');
+        // kReleaseMode
+        final localUrl = Uri.parse('http://localhost:4876/login');
+        final prodUrl = Uri.parse('${MainApp.baseUrl}/login');
+        final finalUrl = kReleaseMode ? prodUrl : localUrl;
+
+        final url = prodUrl;
         final response = await http.post(
           url,
           body: jsonEncode({'password': _password, 'email': _email}),

@@ -56,7 +56,8 @@ class MyApp extends StatelessWidget {
 
 class MainApp extends StatefulWidget {
   // rest-ask7cdmnk-adrielwerlich.vercel.app
-  static const baseUrl = kReleaseMode ? 'https://supabase-manager.vercel.app' : 'http://localhost:4876';
+  // static const baseUrl = kReleaseMode ? 'https://supabase-manager.vercel.app' : 'http://localhost:4876';
+  static const baseUrl = 'https://supabase-manager.vercel.app';
   @override
   State<MainApp> createState() => _MainAppState();
 }
@@ -70,33 +71,8 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
-    // checkLoginStatus();
   }
 
-  // void checkLoginStatus() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   bool loggedIn = prefs.getBool('isLoggedIn') ?? false;
-  //   setState(() {
-  //     isLogged = loggedIn;
-  //   });
-    
-  //   if (!loggedIn) {
-  //     // Perform logout actions here
-  //     // For example, you can reset the selectedIndex and selectedIndexHistory
-  //     setState(() {
-  //       selectedIndex = 0;
-  //       selectedIndexHistory.clear();
-  //     });
-  //   }
-  // }
-
-  // void onLogout() async {
-  //   SharedPreferences prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool('isLoggedIn', false);
-  //   setState(() {
-  //     isLogged = false;
-  //   });
-  // }
 
   void _toggleSafeAreaVisibility() {
     setState(() {
