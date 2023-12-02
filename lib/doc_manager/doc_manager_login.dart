@@ -52,95 +52,71 @@ class LoginForm extends StatefulWidget {
 
 class _LoginFormState extends State<LoginForm> {
   final _formKey = GlobalKey<FormState>();
-  String _password = kReleaseMode ? '' : '432121341'; // hard coded credentials for dev/debug purposes only
+  String _password = kReleaseMode
+      ? ''
+      : '432121341'; // hard coded credentials for dev/debug purposes only
   String _email = kReleaseMode ? '' : 'adrielwerlich@outlook.com';
   var loading = false;
 
   void _submit(BuildContext ctx) async {
-    if (kReleaseMode) {
-      // Production mode
-      print('Running in production mode');
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            title: Text('In construction'),
-            content: Text('This feature is not yet implemented'),
-            actions: <Widget>[
-              ElevatedButton(
-                child: Text('Dead end'),
-                onPressed: () {
-                  // Navigator.of(context).pop();
-                },
-              ),
-            ],
-          );
-        },
+    if (_formKey.currentState!.validate()) {
+      _formKey.currentState!.save();
+      setState(() {
+        loading = true;
+      });
+
+      // kReleaseMode
+      final localUrl = Uri.parse('http://localhost:4876/login');
+      final prodUrl = Uri.parse('${MainApp.baseUrl}/login');
+      final finalUrl = kReleaseMode ? prodUrl : localUrl;
+
+      final url = prodUrl;
+      final response = await http.post(
+        url,
+        body: jsonEncode({'password': _password, 'email': _email}),
+        headers: {'Content-Type': 'application/json'},
       );
-    } else {
-      // Development mode
-      print('Running in development mode');
-      if (_formKey.currentState!.validate()) {
-        _formKey.currentState!.save();
-        setState(() {
-          loading = true;
-        });
+      if (response.statusCode == 200) {
+        print('Success!');
+        print(response.body);
+        // ignore: use_build_context_synchronously
+        var appState = Provider.of<AppState>(context, listen: false);
 
-        // kReleaseMode
-        final localUrl = Uri.parse('http://localhost:4876/login');
-        final prodUrl = Uri.parse('${MainApp.baseUrl}/login');
-        final finalUrl = kReleaseMode ? prodUrl : localUrl;
-
-        final url = prodUrl;
-        final response = await http.post(
-          url,
-          body: jsonEncode({'password': _password, 'email': _email}),
-          headers: {'Content-Type': 'application/json'},
-        );
-        if (response.statusCode == 200) {
-          print('Success!');
-          print(response.body);
-          // ignore: use_build_context_synchronously
-          var appState = Provider.of<AppState>(context, listen: false);
-
-          // Save userData to appState
-          final data = jsonDecode(response.body);
-          if (data['auth'] == true) {
-            appState.logIn(
-              UserData.fromJsonMap(data['userData']),
-              AuthData.fromJsonMap(data['sessionData'])
-            );
-            Fluttertoast.showToast(
-              msg: "Login successful!",
-              toastLength: Toast.LENGTH_SHORT,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 5,
-            );
-          }
-        } else {
-          print('error');
-          print(response.statusCode);
-          print('Error: ${response.statusCode}');
-          print('Error message: ${response.body}');
+        // Save userData to appState
+        final data = jsonDecode(response.body);
+        if (data['auth'] == true) {
+          appState.logIn(UserData.fromJsonMap(data['userData']),
+              AuthData.fromJsonMap(data['sessionData']));
           Fluttertoast.showToast(
-            msg: 'Login failed: : ${response.body}',
+            msg: "Login successful!",
             toastLength: Toast.LENGTH_SHORT,
             gravity: ToastGravity.BOTTOM,
-            timeInSecForIosWeb: 50,
+            timeInSecForIosWeb: 5,
           );
         }
-
-        Future.delayed(Duration(seconds: 5), () {
-          // This code will be executed after a delay of 5 seconds.
-          print('5 seconds have passed!');
-          if (mounted) {
-            // Avoid calling `setState` if the widget is no longer in the widget tree.
-            setState(() {
-              loading = false;
-            });
-          }
-        });
+      } else {
+        print('error');
+        print(response.statusCode);
+        print('Error: ${response.statusCode}');
+        print('Error message: ${response.body}');
+        Fluttertoast.showToast(
+          msg: 'Login failed: : ${response.body}',
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 50,
+        );
       }
+
+      Future.delayed(Duration(seconds: 5), () {
+        // This code will be executed after a delay of 5 seconds.
+        print('5 seconds have passed!');
+        if (mounted) {
+          // Avoid calling `setState` if the widget is no longer in the widget tree.
+          setState(() {
+            loading = false;
+          });
+        }
+      });
     }
   }
 
