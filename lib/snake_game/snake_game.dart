@@ -73,7 +73,7 @@ class _SnakeGameState extends State<SnakeGame> {
       }
     });
 
-    if (kIsWeb && !isDesktop() && !isMobile()) {
+    if (kIsWeb) {
       html.window.onKeyDown.listen((html.KeyboardEvent event) {
         // print('Key pressed: ${event.key}');
         if (event.key == "Escape") {
