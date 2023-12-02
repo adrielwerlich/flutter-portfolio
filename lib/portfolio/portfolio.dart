@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'projects.dart';
-
+import 'package:url_launcher/url_launcher.dart';
 class Portfolio extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -94,7 +94,13 @@ class _PortfolioPageState extends State<PortfolioPage> {
                           children: <Widget>[
                             TextButton(
                               child: Text('View Project'),
-                              onPressed: () => print(project.link),
+                              onPressed: () async {
+                                if (await canLaunchUrl(Uri.parse(project.link))) {
+                                  await launchUrl(Uri.parse(project.link));
+                                } else {
+                                  throw 'Could not launch ${project.link}';
+                                }
+                              },
                             ),
                           ],
                         ),
