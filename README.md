@@ -1,16 +1,30 @@
-# adriel_flutter_app
+# Adriel's Flutter App
 
-A new Flutter project.
+Welcome to my portfolio Flutter app! This application showcases my skills and projects in a fun and interactive way.
+
+## Features
+
+- **Text Editor**: Built with Quill, you can log in with your email and password to create and manage your documents.
+- **Backend**: The backend is built with Node.js, managing login and CRUD operations for the documents.
+- **Database**: The application uses Supabase for database operations.
+- **Snake Game**: Take a break and enjoy a classic game of Snake right within the app!
+
+## Compatibility
+
+This project is compatible with the following platforms:
+
+- Web
+- Android
+- Windows Desktop
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+To get started with the project, follow these steps:
 
-A few resources to get you started if this is your first Flutter project:
+1. Ensure you have Flutter installed on your system.
+2. Clone the repository.
+3. Navigate to the project directory.
+4. Run `flutter pub get` to fetch the project dependencies.
+5. Finally, run `flutter run` to start the application.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Enjoy exploring my portfolio app!
