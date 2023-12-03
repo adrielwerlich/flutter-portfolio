@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 class DocumentListPage extends StatefulWidget {
   static const routeName = '/documents-list';
 
@@ -134,12 +135,15 @@ class _DocumentListPageState extends State<DocumentListPage>
       // widget.onLogout();
       var appState = Provider.of<AppState>(context, listen: false);
       appState.logOut();
-      Fluttertoast.showToast(
-        msg: "LogOut successful!",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.BOTTOM,
-        timeInSecForIosWeb: 5,
-      );
+      if (kIsWeb) {
+        // Use Fluttertoast here
+        Fluttertoast.showToast(
+          msg: "LogOut successful!",
+          toastLength: Toast.LENGTH_SHORT,
+          gravity: ToastGravity.BOTTOM,
+          timeInSecForIosWeb: 5,
+        );
+      }
       print('Logout successful!');
     } else {
       // Error occurred while logging out
