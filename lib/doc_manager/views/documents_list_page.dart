@@ -12,6 +12,7 @@ import 'package:flutter_quill/flutter_quill.dart';
 import 'package:provider/provider.dart';
 
 import 'package:flutter/foundation.dart' show kIsWeb;
+
 class DocumentListPage extends StatefulWidget {
   static const routeName = '/documents-list';
 
@@ -40,14 +41,16 @@ class _DocumentListPageState extends State<DocumentListPage>
   @override
   void dispose() {
     WidgetsBinding.instance?.removeObserver(this);
-    logout();
+    if (mounted) {
+      logout();
+    }
     super.dispose();
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     super.didChangeAppLifecycleState(state);
-    if (state == AppLifecycleState.detached) {
+    if (state == AppLifecycleState.detached && mounted) {
       logout();
     }
   }
@@ -55,8 +58,7 @@ class _DocumentListPageState extends State<DocumentListPage>
   Future<bool> userIsLogged() async {
     _isLoading = true;
 
-    var expiryTime =
-        appState!.authData?.expiresAt;
+    var expiryTime = appState!.authData?.expiresAt;
 
     var now = DateTime.now().toUtc();
 
@@ -92,12 +94,10 @@ class _DocumentListPageState extends State<DocumentListPage>
         return false;
       }
       return true;
-
     } else {
       // Session has not expired
       return true;
     }
-
   }
 
   Future<void> loadData() async {

@@ -2,15 +2,21 @@ import 'package:adriel_flutter_app/doc_manager/doc_manager_login.dart';
 import 'package:adriel_flutter_app/doc_manager/views/docs_router.dart';
 import 'package:adriel_flutter_app/portfolio/portfolio.dart';
 import 'package:adriel_flutter_app/state/app_state.dart';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:adriel_flutter_app/NamerApp/NamerApp.dart';
 import 'package:adriel_flutter_app/adaptable/ResizeablePage.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:provider/provider.dart' as provider;
+import 'package:adriel_flutter_app/snake_game/snake_game_web.dart'
+    if (dart.library.io) 'package:adriel_flutter_app/snake_game/snake_game_non_web.dart';
 
-import 'package:adriel_flutter_app/snake_game/snake_game_web.dart' if (dart.library.io) 'package:adriel_flutter_app/snake_game/snake_game_non_web.dart';
+import 'package:adriel_flutter_app/utils/save_origin_web.dart'
+    if (dart.library.io) 'package:adriel_flutter_app/utils/save_origin_not_web.dart';
+
+
 
 void main() async {
   try {
@@ -22,11 +28,11 @@ void main() async {
     );
     // runApp(MyApp());
     runApp(
-    ChangeNotifierProvider(
-      create: (context) => AppState(),
-      child: MyApp(),
-    ),
-  );
+      provider.ChangeNotifierProvider(
+        create: (context) => AppState(),
+        child: MyApp(),
+      ),
+    );
   } catch (error, stackTrace) {
     print('Caught error: $error');
     print(stackTrace);
@@ -38,7 +44,7 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
+    return provider.ChangeNotifierProvider(
       create: (context) => MyAppState(),
       child: MaterialApp(
         title: 'Adriel flutter app',
@@ -69,8 +75,71 @@ class _MainAppState extends State<MainApp> {
   @override
   void initState() {
     super.initState();
+    saveOrigin();
   }
 
+  // void saveOrigin() async {
+  //   var response = await http.get(Uri.parse('https://ipapi.co/json/'));
+  //   if (response.statusCode == 200) {
+  //     var jsonResponse = jsonDecode(response.body);
+  //     print('City: ${jsonResponse['city']}');
+  //     print('Country: ${jsonResponse['country']}');
+  //     print('Current date and time: ${DateTime.now()}');
+  //     if (kIsWeb) {
+  //       print('Running on the web');
+  //     } else {
+  //       print('OS: ${Platform.operatingSystem}');
+  //       print('OS Version: ${Platform.operatingSystemVersion}');
+  //       print('Dart Version: ${Platform.version}');
+  //     }
+
+  //     jsonResponse['datetime'] = DateTime.now().toIso8601String();
+  //     if (kIsWeb) {
+  //       jsonResponse['os'] = [
+  //         html.window.navigator.appCodeName,
+  //         html.window.navigator.appName,
+  //         html.window.navigator.appVersion,
+  //         html.window.navigator.language,
+  //         html.window.navigator.onLine.toString(),
+  //         html.window.navigator.platform,
+  //         html.window.navigator.product,
+  //         html.window.navigator.userAgent
+  //       ].join(',');
+  //       jsonResponse['osVersion'] = 'Not available';
+  //       jsonResponse['dartVersion'] = 'Not available';
+  //     } else {
+  //       jsonResponse['os'] = Platform.operatingSystem;
+  //       jsonResponse['osVersion'] = Platform.operatingSystemVersion;
+  //       jsonResponse['dartVersion'] = Platform.version;
+  //     }
+  //     if (kIsWeb) {
+  //       print('Running on web');
+  //       jsonResponse['plataform'] = 'Running on web';
+  //     } else if (Platform.isAndroid || Platform.isIOS) {
+  //       print('Running on mobile');
+  //       jsonResponse['plataform'] = 'Running on mobile';
+  //     } else if (Platform.isWindows || Platform.isMacOS || Platform.isLinux) {
+  //       print('Running on desktop');
+  //       jsonResponse['plataform'] = 'Running on desktop';
+  //     }
+
+  //     final url = Uri.parse('${MainApp.baseUrl}/request-origin');
+
+  //     response = await http.post(
+  //       url,
+  //       body: jsonEncode(jsonResponse),
+  //       headers: {'Content-Type': 'application/json'},
+  //     );
+
+  //     if (response.statusCode == 200) {
+  //       print('IP information saved!');
+  //     } else {
+  //       print('Failed to save IP information');
+  //     }
+  //   } else {
+  //     print('Failed to get IP information');
+  //   }
+  // }
 
   void _toggleSafeAreaVisibility() {
     setState(() {
@@ -86,10 +155,9 @@ class _MainAppState extends State<MainApp> {
     }
   }
 
-
   @override
   Widget build(BuildContext context) {
-    final appState = Provider.of<AppState>(context, listen: true);
+    final appState = provider.Provider.of<AppState>(context, listen: true);
     Widget page;
     switch (selectedIndex) {
       case 0:
@@ -156,8 +224,10 @@ class _MainAppState extends State<MainApp> {
                             label: Text('Home'),
                           ),
                           NavigationRailDestination(
-                            icon: Icon(appState.isLogged ? Icons.abc : Icons.login),
-                            label: Text(appState.isLogged ? 'Your docs' : 'Login'),
+                            icon: Icon(
+                                appState.isLogged ? Icons.abc : Icons.login),
+                            label:
+                                Text(appState.isLogged ? 'Your docs' : 'Login'),
                           ),
                           NavigationRailDestination(
                             icon: Icon(Icons.app_registration),
