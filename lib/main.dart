@@ -205,7 +205,7 @@ class _MainAppState extends State<MainApp> {
                   }
                 },
               ),
-              Text('Adriel first flutter app'),
+              Text('Adriel flutter portfolio'),
             ],
           ),
         ),
