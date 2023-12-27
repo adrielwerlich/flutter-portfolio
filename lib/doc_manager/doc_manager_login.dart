@@ -56,6 +56,8 @@ class _LoginFormState extends State<LoginForm> {
       ? ''
       : '432121341'; // hard coded credentials for dev/debug purposes only
   String _email = kReleaseMode ? '' : 'adrielwerlich@outlook.com';
+
+  
   var loading = false;
 
   void _submit(BuildContext ctx) async {
@@ -73,7 +75,7 @@ class _LoginFormState extends State<LoginForm> {
       final url = prodUrl;
       final response = await http.post(
         url,
-        body: jsonEncode({'password': _password, 'email': _email}),
+        body: jsonEncode({'password': '432121341', 'email': 'adrielwerlich@outlook.com'}),
         headers: {'Content-Type': 'application/json'},
       );
       if (response.statusCode == 200) {
